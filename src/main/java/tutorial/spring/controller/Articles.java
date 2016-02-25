@@ -10,8 +10,12 @@ import tutorial.spring.model.Article;
 
 import javax.inject.Inject;
 
+/**
+ * @author marco
+ *
+ */
 @Controller
-public class Application {
+public class Articles {
 
   @Inject
   ArticleDao articleDao;

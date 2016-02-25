@@ -27,37 +27,30 @@ Passi principali
 == Creazione del progetto
 
 [%step]
-* in Eclipse -> file -> New -> Maven Project
-* nella prima schermata lasciare i Default
-* nella schermata "Select an Archetype"
-** cercare in "Filter:" *ninja* e selezionare *ninja-servlet-archetype-simple*
-* nella schermata successiva del GroupID, ArtificatId, etc.
-** inserire *tutorial.ninja* nel _GroupId_
-** inserire *ninja-training* nel _ArtifactId_
-* verificare il layout del progetto creato in Eclipse
+* in Eclipse -> File -> Import -> Existing Maven Project
+* selezionare la cartella esistente spring-tutorial
+** premere Finish
 
-== application.conf: configurazione db
+== configurazione db
 
 la configurazione è in *src/main/java/resources/application.properties*
 
-[source,java]
+[source]
 .application.conf
 ----
 db.connection.url=jdbc:h2:./target/h2database
-db.connection.username=ra
-db.connection.password=
+spring.freemarker.cache=false
+spring.jpa.hibernate.ddl-auto =validate
 ----
 
 * aggiungere alla fine del file le righe di configurazione del db
 
 == Abilitazione delle migrazioni del db
 
-[source,java]
-.application.conf
-----
-ninja.migration.run=true
-----
-
+* Aggiungere al pom.xml la dipendenza flyway
+** flyway permette di gestire ad alto livello le evoluzioni dello schema
+* tasto destro sul pom.xml -> add dependency
+* nella finestra successiva cercare *flyway*
 * creare inoltre una cartella src/main/java/db/migration
 
 == Creazione del database del Blog
@@ -78,79 +71,76 @@ CREATE TABLE articles (
 
 == Avvio dell'applicazione
 
-* in Eclipse: tasto destro sul progetto -> Run as -> Run configuration...
-* cercare *Maven Build*
-* selezionare *New lanch configuration*
-** impostare il nome di questo run *ninja-training*
-** impostare la *Base directory* utilizzando Browse Workspace... e selezionando il nostro progetto
-** impostare i Maven Goals a *ninja:run*
-
-== Avvio dell'applicazione^(2)^
-
-* avviare con *run* ...
-* verificare la view *console* l'avvio del Ninja
-* verificare quasi alla fine dei log la presenza di _Migrating schema "PUBLIC" to version 1_
+* in Eclipse sfogliare le classi e trovata la classe
+`tutorial.spring.SpringTutorialApplication`
+* fare tasto destro e seguire la voce *Run As -> Java Application*
+** verificare la view *console* l'avvio del Ninja
 
 == Definizione dell'Entity
 
-* creare in *src/main/java* un package *models*
+* creare in *src/main/java* un package `tutorial.spring.models`
 * dentro questo package creare la classe per l'entity Article
 
 [[app-listing]]
 [source,java]
 .Article.java
 ----
-include::{sourcedir}/models/Article.java[lines=19..33]
+include::{sourcedir}/tutorial/spring/model/Article.java[lines=16..33]
 ----
 
 == Definizione del DAO
 
 * creare in *src/main/java* un package *dao*
 * dentro questo package creare la classe per ArticleDao
-** utilizzare la inject per l'entityManager
-** `@Inject Provider<EntityManager> entitiyManagerProvider;`
-* create un metodo list() che restituisce la lista degli articoli presenti
-** annotare il metodo con  `@UnitOfWork` (ninja.jpa.UnitOfWork) per attivare l'accesso al db
+** estendere l'interfaccia PagingAndSortingRepository
+*** imporre come tipi concreti in questa interfaccia `Article` e `Integer`
+** risolvere i problemi di importazione con il completamento o `Ctrl+1`
+*** utilizzando i Repository spring si hanno predisposti diversi metodi di ricerca
 
-== Definizione del DAO^(2)^
+== Utilizzo del DAO
+
+* Aggiungere una classe `tutorial.spring.controller.Articles`
+* annotarla con `@Controller` in modo che sia identificata nel framework
+* inserire un campo *articleDao* di tipo `ArticleDao` in questa classe
+* annotare questo campo con `@Inject` oppure con `@Autowired`
+
+== Utilizzo del DAO^(2)^
+
+Sempre in `tutorial.spring.controller.Articles` creare un metodo index:
+[source,java]
+----
+  @RequestMapping("/")    // <1>
+  public String index() {
+    return "index";       // <2>
+  }
+----
+<1> indica la corrispondenza dell'indirizzo base
+<2> indica di cercare il template di nome index (l'estensione dipende dal sistema di template selezionato)
+
+== Utilizzo del DAO^(3)^
 
 [[app-listing]]
 [source,java]
-.Article.java
+.Articles.java
 ----
-include::{sourcedir}/dao/ArticleDao.java[lines=6..7;14;22..32]
-----
-
-== Utilizzo del DAO nell'ApplicationController
-
-* nella classe ApplicationController modificare il metodo *index*
-* utilizzare il DAO per passare al template da visualizzare la lista degli articoli
-** `render("articles", articles)`
-
-== Utilizzo del DAO nell'ApplicationController^(2)^
-
-[[app-listing]]
-[source,java]
-.ApplicationController.java
-----
-include::{sourcedir}/controllers/ApplicationController.java[lines=16..26]
+include::{sourcedir}/tutorial/spring/controller/Articles.java[lines=17..28]
 ----
 
-== Lista degli Articoli in HomePage
+== Lista degli Articoli
 
-* modificare la vista *views/ApplicationController/index.ftl.html*
+* modificare il template `src/main/resources/templates/index.ftl`
 * eseguire un ciclo per mostrare gli articoli presenti
 ** `<#list articles as article> ... </#list>
 * in caso di assenza di articoli mostrare un avviso all'utente
 ** <#if articles??> ... <#else> ... </#if>
 
-== Lista degli Articoli in HomePage^(2)^
+== Lista degli Articoli^(2)^
 
 [[app-listing]]
 [source,java]
-.index.ftl.html
+.index.ftl
 ----
-include::{sourcedir}/views/ApplicationController/index.ftl.html[]
+include::{sourcedir}/../resources/templates/index.ftl[]
 ----
 
 

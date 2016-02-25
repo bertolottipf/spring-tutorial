@@ -1,9 +1,6 @@
 package tutorial.spring.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -18,10 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="articles")
-@Getter
-@Setter
-@EqualsAndHashCode(of="id")
-@ToString
+@Data
 public class Article {
 
   @Id
