@@ -12,7 +12,7 @@ Cristian Lucchesi <cristian.lucchesi@gmail.com>
 
 == Creazione del Blog
 
-Scopo dell'esercitazoine è la creazione di un blog
+Scopo dell'esercitazione è la creazione di un blog
 
 Passi principali
 [%step]
@@ -38,7 +38,7 @@ Passi principali
 
 == application.conf: configurazione db
 
-la configurazione è in *src/main/java/conf/application.conf*
+la configurazione è in *src/main/java/resources/application.properties*
 
 [source,java]
 .application.conf
