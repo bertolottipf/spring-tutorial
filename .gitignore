@@ -1,5 +1,6 @@
 /target/
 /.mvn/
+/.gradle/
 /.settings/
 /bin/
 /.classpath
