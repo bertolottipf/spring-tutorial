@@ -1,0 +1,161 @@
+= Esercitazione su Spring Boot
+Cristian Lucchesi <cristian.lucchesi@gmail.com>
+2016-02-21
+
+== Preparazione ambiente di sviluppo
+
+ * Java 8 -> http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+ * Editor Eclipse -> http://www.eclipse.org
+ * Maven -> https://maven.apache.org
+ * Database h2 -> http://www.h2database.com/
+ * Spring Boot -> http://projects.spring.io/spring-boot/
+
+== Creazione del Blog
+
+Scopo dell'esercitazoine è la creazione di un blog
+
+Passi principali
+[%step]
+* Creazione di un progetto Spring Boot
+* Definizione del modello
+** Database relazionale
+** Entity JPA
+** Revisione/Definizione del template
+* Home page del Blog (lista Articoli)
+* Inserimento/Modifica/Cancellazione di Articoli
+
+== Creazione del progetto
+
+[%step]
+* in Eclipse -> file -> New -> Maven Project
+* nella prima schermata lasciare i Default
+* nella schermata "Select an Archetype"
+** cercare in "Filter:" *ninja* e selezionare *ninja-servlet-archetype-simple*
+* nella schermata successiva del GroupID, ArtificatId, etc.
+** inserire *tutorial.ninja* nel _GroupId_
+** inserire *ninja-training* nel _ArtifactId_
+* verificare il layout del progetto creato in Eclipse
+
+== application.conf: configurazione db
+
+la configurazione è in *src/main/java/conf/application.conf*
+
+[source,java]
+.application.conf
+----
+db.connection.url=jdbc:h2:./target/h2database
+db.connection.username=ra
+db.connection.password=
+----
+
+* aggiungere alla fine del file le righe di configurazione del db
+
+== Abilitazione delle migrazioni del db
+
+[source,java]
+.application.conf
+----
+ninja.migration.run=true
+----
+
+* creare inoltre una cartella src/main/java/db/migration
+
+== Creazione del database del Blog
+
+* creare un file *V1__.sql* nella cartella db/migration
+
+[source,sql]
+.V1__.sql
+----
+-- the first script for migration
+CREATE TABLE articles (
+    id SERIAL NOT NULL PRIMARY KEY,
+    title varchar(255) NOT NULL,
+    summary varchar(5000),
+    date timestamp
+);
+----
+
+== Avvio dell'applicazione
+
+* in Eclipse: tasto destro sul progetto -> Run as -> Run configuration...
+* cercare *Maven Build*
+* selezionare *New lanch configuration*
+** impostare il nome di questo run *ninja-training*
+** impostare la *Base directory* utilizzando Browse Workspace... e selezionando il nostro progetto
+** impostare i Maven Goals a *ninja:run*
+
+== Avvio dell'applicazione^(2)^
+
+* avviare con *run* ...
+* verificare la view *console* l'avvio del Ninja
+* verificare quasi alla fine dei log la presenza di _Migrating schema "PUBLIC" to version 1_
+
+== Definizione dell'Entity
+
+* creare in *src/main/java* un package *models*
+* dentro questo package creare la classe per l'entity Article
+
+[[app-listing]]
+[source,java]
+.Article.java
+----
+include::{sourcedir}/models/Article.java[lines=19..33]
+----
+
+== Definizione del DAO
+
+* creare in *src/main/java* un package *dao*
+* dentro questo package creare la classe per ArticleDao
+** utilizzare la inject per l'entityManager
+** `@Inject Provider<EntityManager> entitiyManagerProvider;`
+* create un metodo list() che restituisce la lista degli articoli presenti
+** annotare il metodo con  `@UnitOfWork` (ninja.jpa.UnitOfWork) per attivare l'accesso al db
+
+== Definizione del DAO^(2)^
+
+[[app-listing]]
+[source,java]
+.Article.java
+----
+include::{sourcedir}/dao/ArticleDao.java[lines=6..7;14;22..32]
+----
+
+== Utilizzo del DAO nell'ApplicationController
+
+* nella classe ApplicationController modificare il metodo *index*
+* utilizzare il DAO per passare al template da visualizzare la lista degli articoli
+** `render("articles", articles)`
+
+== Utilizzo del DAO nell'ApplicationController^(2)^
+
+[[app-listing]]
+[source,java]
+.ApplicationController.java
+----
+include::{sourcedir}/controllers/ApplicationController.java[lines=16..26]
+----
+
+== Lista degli Articoli in HomePage
+
+* modificare la vista *views/ApplicationController/index.ftl.html*
+* eseguire un ciclo per mostrare gli articoli presenti
+** `<#list articles as article> ... </#list>
+* in caso di assenza di articoli mostrare un avviso all'utente
+** <#if articles??> ... <#else> ... </#if>
+
+== Lista degli Articoli in HomePage^(2)^
+
+[[app-listing]]
+[source,java]
+.index.ftl.html
+----
+include::{sourcedir}/views/ApplicationController/index.ftl.html[]
+----
+
+
+
+
+
+
+
