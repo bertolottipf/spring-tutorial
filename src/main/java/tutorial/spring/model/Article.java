@@ -4,10 +4,13 @@ import lombok.Data;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author cristian
@@ -19,9 +22,11 @@ import javax.persistence.Table;
 public class Article {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy=GenerationType.AUTO)
   private Integer id;
 
+  @NotNull
+  @Column(nullable=false)
   private String title;
 
   private String summary;
