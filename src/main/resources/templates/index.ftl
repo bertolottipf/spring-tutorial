@@ -5,7 +5,7 @@
 
 <#if articles??>
 
-    <#list articles as article>
+    <#list articles.content as article>
         <h3>
             <a href="/article/${article.id}">${article.title}</a>
         </h3>
