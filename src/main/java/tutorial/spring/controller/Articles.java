@@ -1,5 +1,6 @@
 package tutorial.spring.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +32,7 @@ public class Articles {
   @RequestMapping("/")
   public String list(Model model, Optional<Integer> size) {
     final int perPage = size.orElse(PER_PAGE);
-    final Iterable<Article> articles = articleDao.findAll(new PageRequest(0, perPage));
+    final Page<Article> articles = articleDao.findAll(new PageRequest(0, perPage));
     model.addAttribute("articles", articles);
     return "index";
   }
