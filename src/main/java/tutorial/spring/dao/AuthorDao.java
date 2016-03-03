@@ -9,5 +9,5 @@ import tutorial.spring.model.Author;
  *
  */
 public interface AuthorDao extends PagingAndSortingRepository<Author, Integer> {
-
+  //Empty interface
 }

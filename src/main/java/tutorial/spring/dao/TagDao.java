@@ -9,5 +9,5 @@ import tutorial.spring.model.Tag;
  *
  */
 public interface TagDao extends PagingAndSortingRepository<Tag, Integer> {
-
+  //Empty interface
 }

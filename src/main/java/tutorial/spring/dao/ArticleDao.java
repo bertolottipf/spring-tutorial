@@ -5,8 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
 import tutorial.spring.model.Article;
 
 /**
@@ -23,5 +21,5 @@ public interface ArticleDao extends PagingAndSortingRepository<Article, Integer>
   Page<Article> findByAuthorSurname(String surname, Pageable page);
 
   @Query("SELECT a FROM Article a JOIN a.tags t WHERE t.name = ?1")
-  List<Article> findByTagName(String tagName);
+  Page<Article> findByTagName(String tagName, Pageable page);
 }

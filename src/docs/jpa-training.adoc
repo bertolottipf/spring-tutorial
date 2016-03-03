@@ -15,7 +15,7 @@ Passi principali
 * Aggiornamento del DB alla versione 2
 * Nuovi Dao e JPQL con Spring Data
 * Creazione di nuova relazione @ManyToMany
-* Dao con CriteriaQuery
+* JPQL con @ManyToMany
 
 == Nuovo oggetto Author
 
@@ -142,9 +142,14 @@ Page<Article> findByAuthorSurname(String surname, Pageable page);
 
 [source,java]
 ----
-@RequestMapping("/byAuthorSurname")
-public String listByAuthorSurname(Model model, @RequestParam("surname") String surname) {
-  final Page<Article> articles = articleDao.findByAuthorSurname(surname, new PageRequest(0, PER_PAGE));
+@RequestMapping("/")
+public String list(Model model, @RequestParam("surname") Optional<String> surname) {
+  final Page<Article> articles;
+  if (surname.isPresent()) {
+    articles = articleDao.findByAuthorSurname(surname.get(), new PageRequest(0, PER_PAGE));
+  } else {
+    articles = articleDao.findAll(new PageRequest(0, PER_PAGE));
+  }
   model.addAttribute("articles", articles);
   return "index";
 }
@@ -210,7 +215,7 @@ CREATE TABLE articles_tags(
 );
 ----
 
-== Utililità per il Tag
+== TagDao
 
 [source,java]
 .TagDao.class
@@ -219,5 +224,72 @@ public interface TagDao extends PagingAndSortingRepository<Tag, Integer> {
 }
 ----
 
+== Nuovi tag al boot
 
+[source,java]
+.SpringTutorialApplication.java
+----
+ public CommandLineRunner demo(ArticleDao articleDao, AuthorDao authorDao,
+      TagDao tagDao) {
+      //....
+      Tag firstTag;
+      Tag secondTag;
+      if (tagDao.count() == 0L) {
+        firstTag = new Tag();
+        firstTag.setName("Spring");
+        tagDao.save(firstTag);
+        secondTag = new Tag();
+        secondTag.setName("JPA");
+        tagDao.save(secondTag);
+      } else {
+        firstTag = tagDao.findOne(1);
+        secondTag = tagDao.findOne(2);
+      }
+      //....
+      first.getTags().add(firstTag);
+      //...
+      second.getTags().add(secondTag);
+----
 
+== ArticleDao::findByTagName
+
+Nel ArticleDao aggiungere un metodo che restituisca la lista paginata
+degli articoli che hanno un certo Tag (tagName)
+
+[source,java]
+----
+Page<Article> findByTagName(String tagName, Pageable page);
+----
+
+== ArticleDao::findByTagName^(2)^
+
+[source,java]
+----
+@Query("SELECT a FROM Article a JOIN a.tags t WHERE t.name = ?1")
+Page<Article> findByTagName(String tagName, Pageable page);
+----
+
+== Controller Articles: search by tagName
+
+* aggiungere nella controller che gestisce */*  la possibilità di filtrare 
+per tagName
+
+== Controller Articles: search by tagName^(2)^
+
+[source,java]
+----
+@RequestMapping("/")
+public String list(Model model, @RequestParam("surname") Optional<String> surname,
+    @RequestParam("tagName") Optional<String> tagName) {
+  final Page<Article> articles;
+  if (surname.isPresent()) {
+    articles = articleDao.findByAuthorSurname(surname.get(), new PageRequest(0, PER_PAGE));
+  } else if (tagName.isPresent()) {
+    articles = articleDao.findByTagName(tagName.get(), new PageRequest(0, PER_PAGE));
+  } else {
+    articles = articleDao.findAll(new PageRequest(0, PER_PAGE));
+  }
+  model.addAttribute("articles", articles);
+  return "index";
+}
+----

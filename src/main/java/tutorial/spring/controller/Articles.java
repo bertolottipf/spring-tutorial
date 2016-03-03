@@ -1,5 +1,10 @@
 package tutorial.spring.controller;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -9,11 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
 
 import tutorial.spring.dao.ArticleDao;
 import tutorial.spring.model.Article;
@@ -31,9 +31,18 @@ public class Articles {
   ArticleDao articleDao;
 
   @RequestMapping("/")
-  public String list(Model model, Optional<Integer> size) {
-    final int perPage = size.orElse(PER_PAGE);
-    final Page<Article> articles = articleDao.findAll(new PageRequest(0, perPage));
+  public String list(Model model, @RequestParam("surname") Optional<String> surname,
+      @RequestParam("tagName") Optional<String> tagName) {
+    final Page<Article> articles;
+
+    if (surname.isPresent()) {
+      articles = articleDao.findByAuthorSurname(surname.get(), new PageRequest(0, PER_PAGE));
+    } else if (tagName.isPresent()) {
+      articles = articleDao.findByTagName(tagName.get(), new PageRequest(0, PER_PAGE));
+    } else {
+      articles = articleDao.findAll(new PageRequest(0, PER_PAGE));
+    }
+
     model.addAttribute("articles", articles);
     return "index";
   }
