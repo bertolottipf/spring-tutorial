@@ -104,7 +104,7 @@ asciidoctor {
   'idprefix':'',
   'idseparator':'-',
   'docinfo1':'true',
-  'revealjs_theme':'night',
+  'revealjs_theme':'league',
   'revealjs_transition':'default',
   'revealjs_history':'true',
   'revealjs_slideNumber':'true'
