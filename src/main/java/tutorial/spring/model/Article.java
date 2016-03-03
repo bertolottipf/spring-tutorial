@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +37,10 @@ public class Article {
   private String summary;
 
   private Date date;
+
+  @NotNull
+  @ManyToOne(optional = false)
+  private Author author;
 
   @ManyToMany
   @JoinTable(name = "articles_tags")

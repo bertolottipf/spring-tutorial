@@ -1,0 +1,125 @@
+= Esercitazione su JPA
+Cristian Lucchesi <cristian.lucchesi@gmail.com>
+2016-02-19
+:source-highlighter: highlightjs
+:backend: revealjs
+:revealjs_theme: simple
+:revealjs_slideNumber: true
+
+== Esercitazione JPA con Relazione + Spring Data
+
+Passi principali
+[%step]
+* Creazione di nuova entity Author
+** Relazioni @ManyToOne, @OneToMany
+* Aggiornamento del DB alla versione 2
+* Nuovi Dao e JPQL con Spring Data
+* Creazione di nuova relazione @ManyToMany
+* Dao con CriteriaQuery
+
+== Nuovo oggetto Author
+
+* creare un nuovo oggetto (Entity) Author
+** con i campi id, name, surname
+
+== Nuovo oggetto Author^(2)^
+
+[source,java]
+----
+@Entity
+@Table(name = "authors")
+@Data
+@ToString(
+  includeFieldNames = false, of = {"name", "surname"})
+public class Author {
+  @Id
+  @GeneratedValue
+  private Integer id;
+
+  private String name;
+
+  private String surname;
+}
+----
+
+== Nuove relazioni
+
+* inserire una relazione many-to-one obbigatoria tra Article e Author
+** inserire anche la relazione inversa (obbligatoria) tra Author ed Article
+
+== Nuove relazioni^(2)^
+
+[source,java]
+.Article.java
+----
+public class Article {
+  // Gli altri campi...
+  @NotNull
+  @ManyToOne(optional = false)
+  private Author author;
+----
+
+[source,java]
+.Author.java
+----
+public class Author {
+  // Gli altri campi...
+  @OneToMany(mappedBy = "author")
+  private List<Article> articles = new ArrayList<>();
+----
+
+== Evoluzione del DB
+
+* creare una evoluzione del db V2__.sql
+** con la creazione della tabella authors
+** modifica della tabella articles per aggiungere riferimento a authors
+*** impostare il riferimento a authors come NOT NULL
+*** ATTENZIONE alla trappola :-)
+
+[source,sql]
+.Chiavi esterne in h2
+----
+ALTER TABLE articles ADD FOREIGN KEY (author_id) REFERENCES authors(id);
+----
+
+== Evoluzione del DB
+
+[source,sql]
+.V2__.sql
+----
+CREATE TABLE authors (
+    id SERIAL NOT NULL PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    surname varchar(255) NOT NULL,
+);
+
+ALTER TABLE articles ADD COLUMN author_id INT;
+ALTER TABLE articles ADD FOREIGN KEY (author_id) REFERENCES authors(id);
+
+INSERT INTO authors(name, surname) VALUES ('Default', 'Author');
+
+UPDATE articles SET author_id = 1;
+
+ALTER TABLE articles ALTER COLUMN author_id SET NOT NULL;
+----
+
+== Creazione dato AuthorDao
+
+[source,java]
+-AuthorDao.java
+----
+public interface AuthorDao extends PagingAndSortingRepository<Author, Integer> {
+}
+----
+
+== CommandLineRunner 
+
+* all'avvio dell'applicazione
+** caricare l'Author di default (id=1) precedentemente creato
+** impostare negli article creati il default author
+
+== Query Article x AuthorName
+
+* nel ArticleDao aggiungere un metodo per prelevare la lista degli Articoli
+** il cui autore ha un determinato cognome
+** utlizzando l'annotazione @Query + JPQL
