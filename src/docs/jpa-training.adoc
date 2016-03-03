@@ -106,7 +106,7 @@ ALTER TABLE articles ALTER COLUMN author_id SET NOT NULL;
 == Creazione dato AuthorDao
 
 [source,java]
--AuthorDao.java
+.AuthorDao.java
 ----
 public interface AuthorDao extends PagingAndSortingRepository<Author, Integer> {
 }
@@ -123,3 +123,101 @@ public interface AuthorDao extends PagingAndSortingRepository<Author, Integer> {
 * nel ArticleDao aggiungere un metodo per prelevare la lista degli Articoli
 ** il cui autore ha un determinato cognome
 ** utlizzando l'annotazione @Query + JPQL
+
+[source,java]
+----
+@Query("QUI DENTRO CI VA LA SELECT JPQL")
+Page<Article> findByAuthorSurname(String surname, Pageable page);
+----
+
+== Query Article x AuthorName ^(2)^
+
+[source,java]
+----
+@Query("SELECT a FROM Article a WHERE a.author.surname = ?1")
+Page<Article> findByAuthorSurname(String surname, Pageable page);
+----
+
+== Controller per Dao con filtri
+
+[source,java]
+----
+@RequestMapping("/byAuthorSurname")
+public String listByAuthorSurname(Model model, @RequestParam("surname") String surname) {
+  final Page<Article> articles = articleDao.findByAuthorSurname(surname, new PageRequest(0, PER_PAGE));
+  model.addAttribute("articles", articles);
+  return "index";
+}
+----
+
+== Modello Versione 3: Aggiunta Tag
+
+[%step]
+* vogliamo aggiungere un oggetto Tag in relazioni molto-a-molti con gli articoli
+* aggiungere l'Entity Tag
+** un tag ha id e name
+** un tag ha relazioni many-to-many con Articles (e viceversa)
+* aggiungere una V3__.sql con la tabella tags e la tabella articles_tags
+
+== Tag
+
+[source,java]
+./Tag.java
+----
+@Entity
+@Table(name = "tags")
+@Data
+public class Tag {
+
+  @Id
+  @GeneratedValue
+  private Integer id;
+
+  private String name;
+
+  @ManyToMany(mappedBy = "tags")
+  private List<Article> articles = new ArrayList<>();
+}
+----
+
+== Article modificato con many-to-many
+
+[source,java]
+----
+//annotazioni vari...
+public class Article {
+  // gli altri campi...
+    @ManyToMany
+  @JoinTable(name = "articles_tags")
+  private List<Tag> tags = new ArrayList<>();
+}
+----
+
+
+== Terza evoluzione DB
+
+[source,sql]
+.V3__.sql
+----
+CREATE TABLE tags (
+    id SERIAL NOT NULL PRIMARY KEY,
+    name varchar(255) NOT NULL
+);
+
+CREATE TABLE articles_tags(
+  articles_id INT NOT NULL REFERENCES articles(id),
+  tags_id INT NOT NULL REFERENCES tags(id)
+);
+----
+
+== Utililità per il Tag
+
+[source,java]
+.TagDao.class
+----
+public interface TagDao extends PagingAndSortingRepository<Tag, Integer> {
+}
+----
+
+
+

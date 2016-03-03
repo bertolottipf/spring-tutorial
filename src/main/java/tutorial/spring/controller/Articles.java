@@ -8,14 +8,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import tutorial.spring.dao.ArticleDao;
-import tutorial.spring.model.Article;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+
+import tutorial.spring.dao.ArticleDao;
+import tutorial.spring.model.Article;
 
 /**
  * @author marco
@@ -37,6 +38,13 @@ public class Articles {
     return "index";
   }
 
+  @RequestMapping("/byAuthorSurname")
+  public String listByAuthorSurname(Model model, @RequestParam("surname") String surname) {
+    final Page<Article> articles = articleDao.findByAuthorSurname(surname, new PageRequest(0, PER_PAGE));
+    model.addAttribute("articles", articles);
+    return "index";
+  }
+
   @RequestMapping("/article/{id}")
   public String article(@PathVariable Integer id, Model model) {
     final Article article = articleDao.findOne(id);
@@ -52,4 +60,6 @@ public class Articles {
     }
     return "redirect:/";
   }
+
+
 }

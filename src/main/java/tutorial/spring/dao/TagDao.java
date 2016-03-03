@@ -5,7 +5,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import tutorial.spring.model.Tag;
 
 /**
- * @author marco
+ * @author cristian
  *
  */
 public interface TagDao extends PagingAndSortingRepository<Tag, Integer> {
