@@ -9,6 +9,13 @@ Il progetto contiene:
  - il codice sorgente degli esempi mostrati nell'esercitazione
   - (Applicazione Spring Boot per la gestione di un blog)
 
+Le esercitazioni sono suddivise in tre fasi, corrispondenti ai branch:
+ - first
+ - second
+ - third
+
+Fare il checkout del branch desiderato in funzione del punto da cui si desidera partire.
+
 Gli esempi sono basati sull'utlizzo di Java 8, Maven per la
 risoluzione delle dipendenze e h2 come database e Spring Boot 1.3.
 
