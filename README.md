@@ -72,6 +72,7 @@ produrle seguire le istruzioni in src/docs/README.txt.
 ## Contributors
 
 Marco Andreini <marco.andreini@gmail.com>
+
 Cristian Lucchesi <cristian.lucchesi@gmail.com>, @criluc
 
 ## License
