@@ -9,5 +9,5 @@ import tutorial.spring.model.Article;
  *
  */
 public interface ArticleDao extends PagingAndSortingRepository<Article, Integer> {
-
+  //Interfaccia vuota gestita da Spring
 }
