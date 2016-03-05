@@ -85,7 +85,21 @@ CREATE TABLE articles (
 [source,java]
 .Article.java
 ----
-include::{sourcedir}/tutorial/spring/model/Article.java[lines=16..33]
+@Entity
+@Table(name="articles")
+@Data
+public class Article {
+
+  @Id
+  @GeneratedValue
+  private Integer id;
+
+  private String title;
+
+  private String summary;
+
+  private Date date;
+}
 ----
 
 == Definizione del DAO
@@ -123,7 +137,18 @@ Sempre in `tutorial.spring.controller.Articles` creare un metodo index:
 [source,java]
 .Articles.java
 ----
-include::{sourcedir}/tutorial/spring/controller/Articles.java[lines=17..28]
+@Controller
+public class Articles {
+
+  @Inject
+  ArticleDao articleDao;
+
+  @RequestMapping("/")
+  public String index(Model model) {
+    final Iterable<Article> articles = articleDao.findAll();
+    model.addAttribute("articles", articles);
+    return "index";
+  }
 ----
 
 == Lista degli Articoli
@@ -140,7 +165,25 @@ include::{sourcedir}/tutorial/spring/controller/Articles.java[lines=17..28]
 [source,java]
 .index.ftl
 ----
-include::{sourcedir}/../resources/templates/index.ftl[]
+<#import "/layout/layout.ftl" as layout>
+<@layout.myLayout "Home page">
+
+<h1>Spring Super Blog</h1>
+
+<#if articles??>
+
+    <#list articles as article>
+        <h3>
+            <a href="/article/${article.id}">${article.title}</a>
+        </h3>
+        <p>${article.date?date}</p>
+    </#list>
+
+<#else>
+  <div class="alert alert-warning">Al momento non sono presenti Articoli in questo blog</div>
+</#if>
+
+</@layout.myLayout>
 ----
 
 
