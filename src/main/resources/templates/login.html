@@ -1,0 +1,18 @@
+<#import "/layout/layout.html" as layout>
+<#import "/layout/form.html" as form>
+<@layout.myLayout "Login">
+
+<form action="/login" method="post" class="form-horizontal">
+    <div>
+    <input type="text" name="username" required="true" />
+    </div>
+    <input type="password" name="password" required="true" />
+    <div>
+        <button type="submit" class="btn btn-primary">Accedi</button>
+    </div>
+</form>
+
+<#if error.isPresent()>
+<p class="alert alert-warning">The email or password you have entered is invalid, try again.</p>
+</#if>
+</@>

@@ -1,0 +1,70 @@
+<#ftl strip_whitespace=true>
+<#import "/spring.ftl" as spring />
+
+<#macro input path messageKey=path required=false attributes="">
+    <@spring.bind path/>
+    <#assign error><#if spring.status.errorMessages?has_content>has-error has-feedback</#if></#assign>
+    <#assign name="${spring.status.expression}">
+    <#assign value=spring.status.value!>
+    <#assign id="${name?replace('[','')?replace(']','')}">
+
+   <div class="form-group ${error} <#if required>required</#if>">
+    <label class="control-label col-sm-3" for="${id}"><@spring.messageText messageKey, messageKey /></label>
+    <div class="col-sm-9">
+      <#nested>
+     <#if error?has_content>
+        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+        <span class="help-block">${spring.status.errorMessages?first}</span>
+     </#if>
+    </div>
+   </div>
+</#macro>
+
+<#macro text path messageKey=path type="text" required=false attributes="">
+  <@input path=path messageKey=messageKey required=required>
+    <input type="${type}" id="${id}" name="${name}" value="${value}"
+      class="form-control" <#if required>required</#if> ${attributes} />
+      <#nested>
+  </@input>
+</#macro>
+
+<#macro textarea path messageKey=path type="text" required=false attributes="">
+  <@input path=path messageKey=messageKey required=required>
+    <textarea id="${id}" name="${name}"
+      class="form-control" <#if required>required</#if> ${attributes}>${value}</textarea>
+    <#nested>
+  </@input>
+</#macro>
+
+<#macro selectModel path values messageKey=path attributes="" required=false>
+   <@input path=path messageKey=messageKey attributes=attributes required=required>
+    <select class="form-control" id="${id}" name="${name}" ${attributes}>
+      <option value>-- <@spring.message "select.choose"/> --</option>
+      <#list values as item>
+            <#assign label>${item?html}</#assign>
+          <option value="${item.id}" <#if isSelected(item.id)> selected</#if>>${label}</option>
+      </#list>
+  </select>
+   </@input>
+</#macro>
+
+<#macro selectModels path values messageKey=path attributes="" required=false>
+  <@input path=path messageKey=messageKey attributes=attributes required=required>
+    <select multiple class="form-control" id="${id}" name="${name}" ${attributes}>
+      <#list values as item>
+        <#assign label>${item?html}</#assign>
+        <option value="${item.id}" <#if isSelected(item.id)> selected</#if>>${label}</option>
+      </#list>
+  </select>
+  </@>
+</#macro>
+
+<#function isSelected item>
+  <#if item?string == "true"><#return true><#elseif item?string == "false"><#return false></#if>  <#-- Controllo per boolean  -->
+  <#if value?has_content>
+    <#if value?is_enumerable && value?seq_contains(item)><#return true></#if> <#-- Controllo per Set o List -->
+    <#if value?is_string && value?string == item?string><#return true></#if> <#-- Controllo per String (include gli enum) -->
+    <#if value?is_number && value?number == item?number><#return true></#if> <#-- Controllo per int,long,float -->
+  </#if>
+  <#return false>
+</#function>

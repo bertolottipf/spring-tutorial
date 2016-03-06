@@ -1,0 +1,12 @@
+<#import "/layout/layout.html" as layout>
+<@layout.myLayout article.title>
+
+<h3>${article.date?date}</h3>
+<p>
+    ${article.summary}
+</p>
+
+<a class="btn btn-primary" href="/article/${article.id}/edit">Modifica</a>
+<a class="btn btn-danger" href="/article/${article.id}/delete">Elimina</a>
+
+</@layout.myLayout>

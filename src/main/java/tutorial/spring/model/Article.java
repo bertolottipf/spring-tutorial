@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * @author cristian
@@ -30,12 +31,15 @@ public class Article {
   @GeneratedValue(strategy=GenerationType.AUTO)
   private Integer id;
 
+  @Size(min=1, max=200)
   @NotNull
   @Column(nullable=false)
   private String title;
 
+  @NotNull @Size(min=1, max=5000)
   private String summary;
 
+  @NotNull
   private Date date;
 
   @NotNull

@@ -12,6 +12,15 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="/"><@spring.messageText "header.home", "header.home" /></a></li>
       </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <#if currentUser??>
+         <li><a href="#">${currentUser.author?string}</a></li>
+         <li><a href="/logout">Esci</a></li>
+        <#else>
+         <li><a href="/login">Accedi</a></li>
+        </#if>
+      </ul>
     </div>
     <!--/.navbar-collapse -->
   </div>

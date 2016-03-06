@@ -1,0 +1,19 @@
+<#import "/layout/layout.html" as layout>
+<#import "/layout/form.html" as form>
+<@layout.myLayout (article.id?? ?then('Modifica articolo', 'Nuovo articolo'))>
+
+<form action="/article/${article.id!}/save" class="form-horizontal" method="post">
+
+    <@form.text path="article.title" required=true />
+    <@form.textarea path="article.summary" required=true />
+    <@form.text path="article.date" required=true />
+    <@form.selectModels path="article.tags" values=tags required=true />
+    <@form.selectModel path="article.author" values=authors required=true />
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary col-sm-offset-2">
+            Salva
+        </button>
+    </div>
+</form>
+</@layout.myLayout>

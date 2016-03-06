@@ -2,6 +2,8 @@ package tutorial.spring.dao;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 import tutorial.spring.model.Author;
 
 /**
@@ -9,5 +11,7 @@ import tutorial.spring.model.Author;
  *
  */
 public interface AuthorDao extends PagingAndSortingRepository<Author, Integer> {
-  //Empty interface
+
+  List<Author> findByOrderBySurnameAsc();
+  List<Author> findByUsername(String username);
 }

@@ -22,4 +22,6 @@ public interface ArticleDao extends PagingAndSortingRepository<Article, Integer>
 
   @Query("SELECT a FROM Article a JOIN a.tags t WHERE t.name = ?1")
   Page<Article> findByTagName(String tagName, Pageable page);
+
+  Page<Article> findByOrderByIdDesc(Pageable page);
 }

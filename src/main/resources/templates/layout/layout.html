@@ -4,7 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>${title}</title>
+    <title><@spring.messageText "header.title", "header.title" />: ${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -13,8 +13,6 @@
     <link href="/webjars/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <!-- Optional theme -->
     <link rel="stylesheet" href="/webjars/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-
-    <!-- Latest compiled and minified JavaScript -->
 
     <style type="text/css">
       body {
@@ -33,7 +31,9 @@
 
     <div class="container">
 
-        <#include "./header.ftl"/>
+        <#include "./header.html"/>
+
+        <h1>${title}</h1>
 
         <#if (flash_error)??>
             <div class="alert alert-danger">
@@ -49,7 +49,7 @@
 
         <#nested/>
 
-        <#include "./footer.ftl"/>
+        <#include "./footer.html"/>
 
     </div> <!-- /container -->
     <script type="text/javascript" src="/webjars/jquery/2.2.0/jquery.js"></script>

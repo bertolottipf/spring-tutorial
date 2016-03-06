@@ -1,0 +1,32 @@
+<#import "/layout/layout.html" as layout>
+<@layout.myLayout "Spring Tutorial Super Blog">
+
+<div class="clearfix">
+    <div class="pull-right">
+        <a class="btn btn-primary" href="/article/new">
+            Nuovo articolo
+        </a>
+    </div>
+</div>
+
+<#if articles??>
+
+    <div class="list-group">
+    <#list articles.content as article>
+        <a href="/article/${article.id}" class="list-group-item">
+            <span class="pull-right">
+                <#list article.tags as tag>
+                  <span class="label label-default">${tag.name}</span>
+                </#list>
+                <span class="label label-info">${article.date?string['dd/MM/yyyy']}</span>
+            </span>
+
+            ${article.title}
+        </a>
+    </#list>
+    </div>
+<#else>
+  <div class="alert alert-warning">Al momento non sono presenti Articoli in questo blog</div>
+</#if>
+
+</@layout.myLayout>
