@@ -3,7 +3,7 @@
 Tutorial in Italiano su Spring Boot e Spring MVC con utilizzo di Java Persistent API (JPA) ed Hibernate.
 
 Il progetto contiene:
- - le slide per un'esercizione sull'utilizzo di Spring, disponibii nei formati:
+ - le slide per un'esercitazione sull'utilizzo di Spring, disponibili nei formati:
   - revealjs dentro il file slide-esercizione.zip
   - asciidoctor nella file src/docs/spring-training.adoc e src/docs/jpa-training.adoc
  - il codice sorgente degli esempi mostrati nell'esercitazione
@@ -16,7 +16,7 @@ Le esercitazioni sono suddivise in tre fasi, corrispondenti ai branch:
 
 Fare il checkout del branch desiderato in funzione del punto da cui si desidera partire.
 
-Gli esempi sono basati sull'utlizzo di Java 8, Maven per la
+Gli esempi sono basati sull'utilizzo di Java 8, Maven per la
 risoluzione delle dipendenze e h2 come database e Spring Boot 1.3.
 
 Le slide dell'esercitazione sono scritte con asciidoctor + revealjs.
